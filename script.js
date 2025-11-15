@@ -10,47 +10,47 @@ let totalImages = 11; // 画像の総数(1.png〜11.png)
 let drawnImages = []; // 既に選ばれた画像
 let isAnimating = false; // アニメーション実行中フラグ
 
-// アニメーションの種類と対応する効果音
+// アニメーションの種類と対応する効果音(各演出を2秒延長して4800msに)
 const animationTypes = [
     {
         name: '落下爆発演出',
         className: 'fall-animation',
-        duration: 2800,
+        duration: 4800,
     },
     {
         name: '高速回転演出',
         className: 'slide-animation',
-        duration: 2800,
+        duration: 4800,
     },
     {
         name: 'ビッグスロット演出',
         className: 'slot-animation',
-        duration: 2800,
+        duration: 4800,
     },
     {
         name: '爆発フラッシュ演出',
         className: 'explosion-animation',
-        duration: 2800,
+        duration: 4800,
     },
     {
         name: '金色キラキラ演出',
         className: 'golden-animation',
-        duration: 2800,
+        duration: 4800,
     },
     {
         name: '虹色トランジション演出',
         className: 'rainbow-animation',
-        duration: 2800,
+        duration: 4800,
     },
     {
         name: 'バウンス演出',
         className: 'bounce-animation',
-        duration: 2800,
+        duration: 4800,
     },
     {
         name: '稲妻エフェクト演出',
         className: 'lightning-animation',
-        duration: 2800,
+        duration: 4800,
     }
 ];
 
@@ -102,22 +102,35 @@ function playSound() {
     }
 }
 
-// よりスロットらしい演出にするためのランダム画像表示関数
+// よりスロットらしい演出にするためのランダム画像表示関数(射幸心を煽る仕様に強化)
 function showSlotImages(duration, finalImageNumber, callback) {
     const startTime = Date.now();
     const endTime = startTime + duration;
+    let updateCount = 0;
 
     function updateImage() {
         const now = Date.now();
+        updateCount++;
 
         if (now < endTime) {
             // ランダムな画像番号を表示
             const randomImageNum = Math.floor(Math.random() * totalImages) + 1;
             displayImage(randomImageNum);
 
-            // 更新頻度を徐々に遅くする
+            // 更新頻度を徐々に遅くする(射幸心を煽るため、より細かく制御)
             const progress = (now - startTime) / duration;
-            const delay = 50 + Math.floor(progress * 450);
+            
+            // 前半は高速、中盤は中速、後半は徐々に減速し期待感を高める
+            let delay;
+            if (progress < 0.3) {
+                delay = 30; // 超高速
+            } else if (progress < 0.6) {
+                delay = 50 + Math.floor((progress - 0.3) * 300); // 中速から減速開始
+            } else if (progress < 0.85) {
+                delay = 150 + Math.floor((progress - 0.6) * 800); // さらに減速
+            } else {
+                delay = 350 + Math.floor((progress - 0.85) * 2000); // 最終段階で大幅減速
+            }
 
             setTimeout(updateImage, delay);
         } else {
@@ -130,25 +143,26 @@ function showSlotImages(duration, finalImageNumber, callback) {
     updateImage();
 }
 
-// 画像を表示する関数
+// 画像を表示する関数(サイズを大きく調整)
 function displayImage(imageNumber) {
     const imgPath = `images/${imageNumber}.png`;
-    numberDisplay.innerHTML = `<img src="${imgPath}" alt="クッキー${imageNumber}" style="max-width: 100%; max-height: 100%; object-fit: contain;">`;
+    // 画像サイズを80%から95%に拡大
+    numberDisplay.innerHTML = `<img src="${imgPath}" alt="クッキー${imageNumber}" style="max-width: 95%; max-height: 95%; object-fit: contain;">`;
 }
 
-// エフェクト生成関数
+// エフェクト生成関数(より派手に強化)
 function createEffects(type) {
     const lotteryStage = document.querySelector('.lottery-stage');
 
     if (type === '爆発フラッシュ演出') {
-        // 爆発エフェクト要素を作成
-        for (let i = 0; i < 50; i++) {
+        // 爆発エフェクト要素を作成(パーティクル数を増やして派手に)
+        for (let i = 0; i < 80; i++) {
             const particle = document.createElement('div');
             particle.className = 'explosion-particle';
 
             // ランダムなスタイルを設定
             particle.style.position = 'absolute';
-            particle.style.width = Math.random() * 15 + 5 + 'px';
+            particle.style.width = Math.random() * 20 + 8 + 'px';
             particle.style.height = particle.style.width;
             particle.style.backgroundColor = `hsl(${Math.random() * 60 + 10}, 100%, 50%)`;
             particle.style.borderRadius = '50%';
@@ -159,7 +173,7 @@ function createEffects(type) {
 
             // アニメーション設定
             const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 300 + 100;
+            const speed = Math.random() * 400 + 150;
             const x = Math.cos(angle) * speed;
             const y = Math.sin(angle) * speed;
 
@@ -167,7 +181,7 @@ function createEffects(type) {
                 { transform: 'translate(-50%, -50%)', opacity: 1 },
                 { transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`, opacity: 0 }
             ], {
-                duration: Math.random() * 1000 + 1000,
+                duration: Math.random() * 1500 + 1500,
                 easing: 'cubic-bezier(0,.9,.57,1)',
                 fill: 'forwards'
             });
@@ -179,18 +193,18 @@ function createEffects(type) {
                 if (lotteryStage.contains(particle)) {
                     lotteryStage.removeChild(particle);
                 }
-            }, 2000);
+            }, 3000);
         }
 
     } else if (type === '金色キラキラ演出') {
-        // 金色キラキラエフェクト
-        for (let i = 0; i < 30; i++) {
+        // 金色キラキラエフェクト(星の数を増やして豪華に)
+        for (let i = 0; i < 50; i++) {
             const star = document.createElement('div');
             star.className = 'star-particle';
 
             // 星型の設定
             star.style.position = 'absolute';
-            star.style.width = Math.random() * 20 + 10 + 'px';
+            star.style.width = Math.random() * 30 + 15 + 'px';
             star.style.height = star.style.width;
             star.style.backgroundColor = '#FFD700';
             star.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
@@ -201,10 +215,10 @@ function createEffects(type) {
             // アニメーション設定
             star.animate([
                 { transform: 'scale(0) rotate(0deg)', opacity: 0 },
-                { transform: 'scale(1) rotate(180deg)', opacity: 1, offset: 0.5 },
+                { transform: 'scale(1.5) rotate(180deg)', opacity: 1, offset: 0.5 },
                 { transform: 'scale(0) rotate(360deg)', opacity: 0 }
             ], {
-                duration: Math.random() * 1500 + 1500,
+                duration: Math.random() * 2000 + 2000,
                 easing: 'ease-in-out',
                 fill: 'forwards'
             });
@@ -216,11 +230,11 @@ function createEffects(type) {
                 if (lotteryStage.contains(star)) {
                     lotteryStage.removeChild(star);
                 }
-            }, 3000);
+            }, 4000);
         }
 
     } else if (type === '稲妻エフェクト演出') {
-        // 稲妻エフェクト
+        // 稲妻エフェクト(より激しく)
         const flash = document.createElement('div');
         flash.className = 'lightning-flash';
         flash.style.position = 'absolute';
@@ -231,40 +245,42 @@ function createEffects(type) {
         flash.style.zIndex = '5';
         lotteryStage.appendChild(flash);
 
-        // フラッシュアニメーション
+        // フラッシュアニメーション(回数を増やして強化)
         flash.animate([
             { opacity: 0 },
-            { opacity: 0.9, offset: 0.1 },
-            { opacity: 0.1, offset: 0.2 },
-            { opacity: 0.8, offset: 0.3 },
-            { opacity: 0, offset: 0.4 },
-            { opacity: 0.6, offset: 0.5 },
-            { opacity: 0, offset: 0.6 }
+            { opacity: 0.95, offset: 0.08 },
+            { opacity: 0.1, offset: 0.16 },
+            { opacity: 0.9, offset: 0.24 },
+            { opacity: 0, offset: 0.32 },
+            { opacity: 0.85, offset: 0.40 },
+            { opacity: 0, offset: 0.48 },
+            { opacity: 0.8, offset: 0.56 },
+            { opacity: 0, offset: 0.64 }
         ], {
-            duration: 1000,
+            duration: 1500,
             fill: 'forwards'
         });
 
-        // 稲妻の線を描画
-        for (let i = 0; i < 3; i++) {
+        // 稲妻の線を描画(本数を増やして派手に)
+        for (let i = 0; i < 5; i++) {
             setTimeout(() => {
                 const lightning = document.createElement('div');
                 lightning.className = 'lightning-line';
                 lightning.style.position = 'absolute';
-                lightning.style.width = '4px';
+                lightning.style.width = '6px';
                 lightning.style.height = '0';
                 lightning.style.backgroundColor = '#00FFFF';
-                lightning.style.left = `${30 + i * 20}%`;
+                lightning.style.left = `${20 + i * 15}%`;
                 lightning.style.top = '0';
                 lightning.style.zIndex = '6';
-                lightning.style.boxShadow = '0 0 10px 2px #00FFFF';
+                lightning.style.boxShadow = '0 0 15px 3px #00FFFF';
                 lotteryStage.appendChild(lightning);
 
                 lightning.animate([
                     { height: '0%' },
                     { height: '100%' }
                 ], {
-                    duration: 300,
+                    duration: 250,
                     fill: 'forwards',
                     easing: 'ease-in'
                 });
@@ -274,8 +290,8 @@ function createEffects(type) {
                     if (lotteryStage.contains(lightning)) {
                         lotteryStage.removeChild(lightning);
                     }
-                }, 1000);
-            }, i * 200);
+                }, 1200);
+            }, i * 150);
         }
 
         // フラッシュ要素を削除
@@ -283,7 +299,7 @@ function createEffects(type) {
             if (lotteryStage.contains(flash)) {
                 lotteryStage.removeChild(flash);
             }
-        }, 2000);
+        }, 2500);
     }
 }
 
