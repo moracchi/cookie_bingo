@@ -3,44 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>クッキー抽選ルーレット</title>
+    <title>昭島国際法務PFI 大忘年会 2025</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;800&family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- 雪の結晶エフェクト -->
-    <div class="snowflakes">
-        <div class="snowflake">❅</div>
-        <div class="snowflake">❆</div>
-        <div class="snowflake">❅</div>
-        <div class="snowflake">❆</div>
-        <div class="snowflake">❅</div>
-        <div class="snowflake">❆</div>
-        <div class="snowflake">❅</div>
-        <div class="snowflake">❆</div>
-        <div class="snowflake">❅</div>
-        <div class="snowflake">❆</div>
-        <div class="snowflake">❅</div>
-        <div class="snowflake">❆</div>
+    <!-- 背景パターン -->
+    <div class="bg-pattern"></div>
+
+    <!-- 抽選中のディスコライト演出レイヤー -->
+    <div class="disco-layer">
+        <div class="spotlight spot-1"></div>
+        <div class="spotlight spot-2"></div>
+        <div class="spotlight spot-3"></div>
     </div>
+    
+    <!-- 当選時の派手な背景演出レイヤー -->
+    <div id="winEffect" class="win-effect-layer"></div>
+
+    <!-- 雪の結晶エフェクト（JSで大量生成） -->
+    <div id="snowContainer" class="snowflakes"></div>
 
     <div class="container">
-        <!-- タイトル部分 -->
+        <!-- タイトル部分 (1行化) -->
         <div class="title-container">
-            <div class="subtitle">クッキー抽選ルーレット</div>
-            <div class="main-title">2025年 昭島国際法務PFI 忘年会</div>
-        </div>
-
-        <!-- 抽選エリア -->
-        <div class="lottery-stage">
-            <div class="shine-effect"></div>
-            <div class="animation-container">
-                <div class="number-display" id="numberDisplay">?</div>
+            <div class="title-inner">
+                <h1 class="main-title">昭島国際法務PFI 大忘年会 2025</h1>
             </div>
         </div>
 
-        <!-- 履歴エリア -->
+        <!-- 抽選エリア (リボン削除・主役として巨大化) -->
+        <div class="lottery-stage-wrapper">
+            <div class="lottery-stage">
+                <div class="shine-effect"></div>
+                <div class="animation-container">
+                    <div class="number-display" id="numberDisplay">
+                        <span class="question-mark">?</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 履歴エリア (右下に配置) -->
         <div class="history-container">
-            <h2>抽選履歴</h2>
+            <div class="history-label">HISTORY</div>
             <div class="number-history" id="numberHistory"></div>
         </div>
     </div>
