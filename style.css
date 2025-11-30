@@ -100,53 +100,6 @@ body.is-spinning .disco-layer {
     opacity: 1;
 }
 
-body.is-spinning {
-    background: radial-gradient(circle at center, #4a0000 0%, #000000 100%);
-}
-
-.spotlight {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 150vmax;
-    height: 150vmax;
-    transform-origin: center;
-    transform: translate(-50%, -50%);
-    background: conic-gradient(from 0deg,
-            transparent 0deg,
-            rgba(255, 255, 255, 0.0) 20deg,
-            rgba(255, 215, 0, 0.3) 40deg,
-            rgba(255, 255, 255, 0.0) 60deg);
-    animation: rotateSpotlight 4s linear infinite;
-}
-
-.spot-1 {
-    animation-duration: 5s;
-    animation-direction: normal;
-}
-
-.spot-2 {
-    animation-duration: 7s;
-    animation-direction: reverse;
-    background: conic-gradient(from 120deg, transparent 0deg, rgba(0, 255, 0, 0.2) 30deg, transparent 60deg);
-}
-
-.spot-3 {
-    animation-duration: 9s;
-    animation-direction: normal;
-    background: conic-gradient(from 240deg, transparent 0deg, rgba(0, 255, 255, 0.2) 30deg, transparent 60deg);
-}
-
-@keyframes rotateSpotlight {
-    0% {
-        transform: translate(-50%, -50%) rotate(0deg);
-    }
-
-    100% {
-        transform: translate(-50%, -50%) rotate(360deg);
-    }
-}
-
 /* 雪の結晶 */
 .snowflakes {
     position: fixed;
@@ -828,4 +781,75 @@ body.is-spinning .lottery-stage {
     100% {
         transform: translateX(-50%) translateY(-20px);
     }
+}
+
+/* =========================================
+   抽選中（スピン中）の興奮演出
+   ========================================= */
+
+/* 1. 吹雪エフェクト: 雪の結晶を高速化・ブラー */
+body.is-spinning .snowflake {
+    animation-duration: 0.5s !important;
+    /* インラインスタイルを強制上書き */
+    filter: blur(2px);
+    opacity: 0.9;
+    transform: scale(1.2);
+    /* 少し大きく */
+}
+
+/* 2. 背景の激しい明滅 */
+body.is-spinning {
+    animation: backgroundFlash 0.5s infinite alternate !important;
+}
+
+@keyframes backgroundFlash {
+    0% {
+        background-color: #4a0000;
+        box-shadow: inset 0 0 50px rgba(255, 0, 0, 0.5);
+    }
+
+    100% {
+        background-color: #200000;
+        box-shadow: inset 0 0 150px rgba(255, 215, 0, 0.6);
+    }
+}
+
+/* 3. 集中線（ズームライン）アニメーション */
+/* 既存の disco-layer を活用して漫画的な集中線を表現 */
+body.is-spinning .disco-layer {
+    opacity: 1;
+    background: repeating-conic-gradient(from 0deg,
+            transparent 0deg,
+            transparent 10deg,
+            rgba(255, 215, 0, 0.15) 10deg,
+            /* ゴールドの線 */
+            rgba(255, 215, 0, 0.15) 20deg);
+    animation: zoomLines 0.2s linear infinite;
+    /* 超高速回転 */
+    mix-blend-mode: overlay;
+    transform-origin: center;
+}
+
+@keyframes zoomLines {
+    0% {
+        transform: scale(1.2) rotate(0deg);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scale(1.5) rotate(5deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.2) rotate(10deg);
+        opacity: 0.6;
+    }
+}
+
+/* 4. 背景パターンの高速回転 */
+body.is-spinning::after {
+    animation: bgRotate 2s linear infinite !important;
+    /* 通常30sを2sに加速 */
+    opacity: 0.6;
 }

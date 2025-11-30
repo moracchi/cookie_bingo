@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 雪生成
     function createSnowflakes() {
-        const flakeCount = 200;
+        const flakeCount = 300; // 吹雪のために増量
         const symbols = ['❅', '❆', '●', '.', '✦'];
 
         for (let i = 0; i < flakeCount; i++) {
